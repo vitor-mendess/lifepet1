@@ -1,5 +1,5 @@
 # 🐾 LifePet
-ttps://github.com/vitor-mendess/lifepet1
+https://github.com/vitor-mendess/lifepet1
 
 ## Integrantes
 
