@@ -9,4 +9,5 @@ public interface VacinaRepository extends JpaRepository<Vacina, Long> {
 
     List<Vacina> findByNomeContainingIgnoreCase(String nome);
 
+    List<Vacina> findByPetId(Long petId);
 }

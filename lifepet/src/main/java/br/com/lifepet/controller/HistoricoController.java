@@ -1,4 +1,4 @@
-package br.com.lifepet.controller;
+        package br.com.lifepet.controller;
 
 import br.com.lifepet.dto.HistoricoDTO;
 import br.com.lifepet.entity.Historico;
@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
@@ -28,8 +29,10 @@ public class HistoricoController {
     @Autowired
     private HistoricoService service;
 
+
     // LISTAR COM PAGINAÇÃO
     @Operation(summary = "Listar históricos com paginação")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @GetMapping
     public Page<Historico> listar(
 
@@ -43,8 +46,10 @@ public class HistoricoController {
         return service.listar(pageable);
     }
 
+
     // BUSCAR POR ID
     @Operation(summary = "Buscar histórico por ID")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @GetMapping("/{id}")
     public ResponseEntity<Historico> buscarPorId(
             @PathVariable Long id) {
@@ -54,8 +59,10 @@ public class HistoricoController {
         );
     }
 
+
     // CADASTRAR
     @Operation(summary = "Cadastrar novo histórico")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @PostMapping
     public ResponseEntity<HistoricoDTO> salvar(
             @Valid @RequestBody HistoricoDTO dto) {
@@ -78,8 +85,10 @@ public class HistoricoController {
         return ResponseEntity.ok(resposta);
     }
 
+
     // EXCLUIR
     @Operation(summary = "Excluir histórico")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(
             @PathVariable Long id) {
@@ -89,3 +98,4 @@ public class HistoricoController {
         return ResponseEntity.noContent().build();
     }
 }
+

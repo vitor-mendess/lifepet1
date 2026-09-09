@@ -17,9 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Tag(
@@ -36,8 +36,13 @@ public class VacinaController {
     @Autowired
     private PetService petService;
 
+
+    // =========================================================
     // LISTAR COM PAGINAÇÃO
+    // =========================================================
+
     @Operation(summary = "Listar vacinas com paginação")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @GetMapping
     public Page<Vacina> listar(
             @RequestParam(defaultValue = "0") int page,
@@ -54,42 +59,90 @@ public class VacinaController {
         return service.listar(pageable);
     }
 
+
+    // =========================================================
+    // BUSCAR VACINAS DE UM PET
+    // =========================================================
+
+    @Operation(summary = "Buscar vacinas de um pet")
+    @PreAuthorize("hasRole('VETERINARIO')")
+    @GetMapping("/pet/{petId}")
+    public List<Vacina> buscarPorPet(
+            @PathVariable Long petId
+    ) {
+
+        return service.buscarPorPet(petId);
+    }
+
+
+    // =========================================================
     // VACINAS ATRASADAS
+    // =========================================================
+
     @Operation(summary = "Listar vacinas atrasadas")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @GetMapping("/atrasadas")
     public List<Vacina> vacinasAtrasadas() {
 
-        Pageable pageable = PageRequest.of(0, 100);
-
-        return service.listar(pageable)
-                .stream()
-                .filter(v -> v.getProximaDose() != null
-                        && v.getProximaDose().isBefore(LocalDate.now()))
-                .toList();
+        return service.listarAtrasadas();
     }
 
+
+    // =========================================================
+    // VACINAS EM DIA
+    // =========================================================
+
+    @Operation(summary = "Listar vacinas em dia")
+    @PreAuthorize("hasRole('VETERINARIO')")
+    @GetMapping("/em-dia")
+    public List<Vacina> vacinasEmDia() {
+
+        return service.listarEmDia();
+    }
+
+
+    // =========================================================
     // BUSCAR POR ID
+    // =========================================================
+
     @Operation(summary = "Buscar vacina por ID")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @GetMapping("/{id}")
-    public ResponseEntity<Vacina> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Vacina> buscarPorId(
+            @PathVariable Long id
+    ) {
 
         return ResponseEntity.ok(
                 service.buscarPorId(id)
         );
     }
 
+
+    // =========================================================
     // BUSCAR POR NOME
+    // =========================================================
+
     @Operation(summary = "Buscar vacina por nome")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @GetMapping("/buscar")
-    public List<Vacina> buscarPorNome(@RequestParam String nome) {
+    public List<Vacina> buscarPorNome(
+            @RequestParam String nome
+    ) {
 
         return service.buscarPorNome(nome);
     }
 
+
+    // =========================================================
     // CADASTRAR
+    // =========================================================
+
     @Operation(summary = "Cadastrar nova vacina")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @PostMapping
-    public ResponseEntity<VacinaDTO> salvar(@Valid @RequestBody VacinaDTO dto) {
+    public ResponseEntity<VacinaDTO> salvar(
+            @Valid @RequestBody VacinaDTO dto
+    ) {
 
         Vacina vacina = new Vacina();
 
@@ -98,7 +151,9 @@ public class VacinaController {
         vacina.setProximaDose(dto.getProximaDose());
 
         if (dto.getPetId() != null) {
+
             Pet pet = petService.buscarPorId(dto.getPetId());
+
             vacina.setPet(pet);
         }
 
@@ -112,14 +167,22 @@ public class VacinaController {
         resposta.setProximaDose(salva.getProximaDose());
 
         if (salva.getPet() != null) {
-            resposta.setPetId(salva.getPet().getId());
+
+            resposta.setPetId(
+                    salva.getPet().getId()
+            );
         }
 
         return ResponseEntity.ok(resposta);
     }
 
+
+    // =========================================================
     // ATUALIZAR
+    // =========================================================
+
     @Operation(summary = "Atualizar vacina")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @PutMapping("/{id}")
     public ResponseEntity<Vacina> atualizar(
             @PathVariable Long id,
@@ -133,10 +196,17 @@ public class VacinaController {
         );
     }
 
+
+    // =========================================================
     // EXCLUIR
+    // =========================================================
+
     @Operation(summary = "Excluir vacina")
+    @PreAuthorize("hasRole('VETERINARIO')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(
+            @PathVariable Long id
+    ) {
 
         service.deletar(id);
 

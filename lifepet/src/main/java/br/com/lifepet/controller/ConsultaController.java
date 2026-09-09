@@ -1,110 +1,125 @@
 package br.com.lifepet.controller;
 
-import br.com.lifepet.dto.ConsultaDTO;
 import br.com.lifepet.entity.Consulta;
-import br.com.lifepet.entity.Pet;
 import br.com.lifepet.service.ConsultaService;
-import br.com.lifepet.service.PetService;
 
 import jakarta.validation.Valid;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-@Tag(
-        name = "Consultas",
-        description = "Gerenciamento de consultas veterinárias"
-)
 
 @RestController
 @RequestMapping("/consultas")
 public class ConsultaController {
 
-    @Autowired
-    private ConsultaService service;
 
-    @Autowired
-    private PetService petService;
+    private final ConsultaService service;
 
+    public ConsultaController(ConsultaService service) {
+        this.service = service;
+    }
 
-    // LISTAR COM PAGINAÇÃO
-    @Operation(summary = "Listar consultas com paginação")
+// =========================================================
+// LISTAR CONSULTAS
+// =========================================================
+
     @GetMapping
-    public Page<Consulta> listar(
-
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "data") String sort
-    ) {
-
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.by(sort)
-        );
-
-        return service.listar(pageable);
+    @PreAuthorize("hasAnyRole('TUTOR', 'VETERINARIO')")
+    public ResponseEntity<Page<Consulta>> listar(Pageable pageable) {
+        return ResponseEntity.ok(service.listar(pageable));
     }
 
+// =========================================================
+// BUSCAR POR ID
+// =========================================================
 
-    // BUSCAR POR ID
-    @Operation(summary = "Buscar consulta por ID")
     @GetMapping("/{id}")
-    public ResponseEntity<Consulta> buscarPorId(
-            @PathVariable Long id) {
-
-        return ResponseEntity.ok(
-                service.buscarPorId(id)
-        );
+    @PreAuthorize("hasAnyRole('TUTOR', 'VETERINARIO')")
+    public ResponseEntity<Consulta> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+// =========================================================
+// TUTOR - SOLICITAR / AGENDAR CONSULTA
+// =========================================================
 
-    // CADASTRAR
-    @Operation(summary = "Cadastrar nova consulta")
     @PostMapping
-    public ResponseEntity<ConsultaDTO> salvar(
-            @Valid @RequestBody ConsultaDTO dto) {
+    @PreAuthorize("hasRole('TUTOR')")
+    public ResponseEntity<Consulta> agendar(
+            @Valid @RequestBody Consulta consulta) {
 
-        Consulta consulta = new Consulta();
-
-        consulta.setData(dto.getData());
-        consulta.setVeterinario(dto.getVeterinario());
-        consulta.setObservacoes(dto.getObservacoes());
-
-        Pet pet = petService.buscarPorId(dto.getPetId());
-
-        consulta.setPet(pet);
-
-        Consulta salva = service.salvar(consulta);
-
-        ConsultaDTO resposta = new ConsultaDTO();
-
-        resposta.setId(salva.getId());
-        resposta.setData(salva.getData());
-        resposta.setVeterinario(salva.getVeterinario());
-        resposta.setObservacoes(salva.getObservacoes());
-        resposta.setPetId(salva.getPet().getId());
-
-        return ResponseEntity.ok(resposta);
+        return ResponseEntity.ok(service.agendar(consulta));
     }
 
+// =========================================================
+// VETERINÁRIO - ATUALIZAR CONSULTA
+// =========================================================
 
-    // DELETAR
-    @Operation(summary = "Excluir consulta")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('VETERINARIO')")
+    public ResponseEntity<Consulta> atualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Consulta consulta) {
+
+        service.buscarPorId(id);
+
+        consulta.setId(id);
+
+        return ResponseEntity.ok(service.salvar(consulta));
+    }
+
+// =========================================================
+// VETERINÁRIO - CONFIRMAR
+// =========================================================
+
+    @PutMapping("/{id}/confirmar")
+    @PreAuthorize("hasRole('VETERINARIO')")
+    public ResponseEntity<Consulta> confirmar(
             @PathVariable Long id) {
+
+        return ResponseEntity.ok(service.confirmar(id));
+    }
+
+// =========================================================
+// VETERINÁRIO - REALIZAR
+// =========================================================
+
+    @PutMapping("/{id}/realizar")
+    @PreAuthorize("hasRole('VETERINARIO')")
+    public ResponseEntity<Consulta> realizar(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(service.realizar(id));
+    }
+
+// =========================================================
+// VETERINÁRIO - CANCELAR
+// =========================================================
+
+    @PutMapping("/{id}/cancelar")
+    @PreAuthorize("hasRole('VETERINARIO')")
+    public ResponseEntity<Consulta> cancelar(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(service.cancelar(id));
+    }
+
+// =========================================================
+// VETERINÁRIO - DELETAR
+// =========================================================
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('VETERINARIO')")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
 
         service.deletar(id);
 
         return ResponseEntity.noContent().build();
     }
+
+
 }
+

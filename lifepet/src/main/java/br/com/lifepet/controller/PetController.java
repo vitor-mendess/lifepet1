@@ -1,4 +1,4 @@
-package br.com.lifepet.controller;
+        package br.com.lifepet.controller;
 
 import br.com.lifepet.dto.PetDTO;
 import br.com.lifepet.entity.Pet;
@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,8 +37,12 @@ public class PetController {
     private TutorService tutorService;
 
 
+    // =========================================================
     // LISTAR COM PAGINAÇÃO
+    // =========================================================
+
     @Operation(summary = "Listar pets com paginação")
+    @PreAuthorize("hasAnyRole('TUTOR', 'VETERINARIO')")
     @GetMapping
     public Page<Pet> listar(
 
@@ -55,8 +60,12 @@ public class PetController {
     }
 
 
+    // =========================================================
     // BUSCAR POR ID
+    // =========================================================
+
     @Operation(summary = "Buscar pet por ID")
+    @PreAuthorize("hasAnyRole('TUTOR', 'VETERINARIO')")
     @GetMapping("/{id}")
     public ResponseEntity<Pet> buscarPorId(
             @PathVariable Long id) {
@@ -67,8 +76,12 @@ public class PetController {
     }
 
 
-    // CADASTRAR COM DTO
+    // =========================================================
+    // CADASTRAR PET
+    // =========================================================
+
     @Operation(summary = "Cadastrar novo pet")
+    @PreAuthorize("hasRole('TUTOR')")
     @PostMapping
     public ResponseEntity<PetDTO> cadastrar(
             @Valid @RequestBody PetDTO dto) {
@@ -104,8 +117,12 @@ public class PetController {
     }
 
 
+    // =========================================================
     // ATUALIZAR
+    // =========================================================
+
     @Operation(summary = "Atualizar pet")
+    @PreAuthorize("hasRole('TUTOR')")
     @PutMapping("/{id}")
     public ResponseEntity<Pet> atualizar(
 
@@ -120,8 +137,12 @@ public class PetController {
     }
 
 
+    // =========================================================
     // DELETAR
+    // =========================================================
+
     @Operation(summary = "Excluir pet")
+    @PreAuthorize("hasRole('TUTOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(
             @PathVariable Long id) {
@@ -132,8 +153,12 @@ public class PetController {
     }
 
 
+    // =========================================================
     // BUSCAR POR NOME
+    // =========================================================
+
     @Operation(summary = "Buscar pet por nome")
+    @PreAuthorize("hasAnyRole('TUTOR', 'VETERINARIO')")
     @GetMapping("/buscar/nome")
     public List<Pet> buscarPorNome(
             @RequestParam String nome) {
@@ -142,8 +167,12 @@ public class PetController {
     }
 
 
+    // =========================================================
     // BUSCAR POR ESPÉCIE
+    // =========================================================
+
     @Operation(summary = "Buscar pet por espécie")
+    @PreAuthorize("hasAnyRole('TUTOR', 'VETERINARIO')")
     @GetMapping("/buscar/especie")
     public List<Pet> buscarPorEspecie(
             @RequestParam String especie) {
@@ -152,8 +181,12 @@ public class PetController {
     }
 
 
+    // =========================================================
     // RECOMENDAÇÕES
+    // =========================================================
+
     @Operation(summary = "Gerar recomendações para o pet")
+    @PreAuthorize("hasRole('TUTOR')")
     @GetMapping("/{id}/recomendacoes")
     public String recomendacoes(
             @PathVariable Long id) {
@@ -171,3 +204,5 @@ public class PetController {
         return "Pet saudável: manter consultas e vacinas em dia.";
     }
 }
+
+

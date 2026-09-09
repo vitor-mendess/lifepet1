@@ -1,4 +1,4 @@
-package br.com.lifepet.controller;
+        package br.com.lifepet.controller;
 
 import br.com.lifepet.dto.TutorDTO;
 import br.com.lifepet.entity.Tutor;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -31,8 +32,10 @@ public class TutorController {
     @Autowired
     private TutorService tutorService;
 
+
     // LISTAR
     @Operation(summary = "Listar tutores com paginação")
+    @PreAuthorize("hasRole('TUTOR')")
     @GetMapping
     public Page<Tutor> listarTodos(
 
@@ -51,8 +54,10 @@ public class TutorController {
         return tutorService.listar(pageable);
     }
 
+
     // BUSCAR POR ID
     @Operation(summary = "Buscar tutor por ID")
+    @PreAuthorize("hasRole('TUTOR')")
     @GetMapping("/{id}")
     public ResponseEntity<Tutor> buscarPorId(
             @PathVariable Long id) {
@@ -62,8 +67,10 @@ public class TutorController {
         );
     }
 
+
     // BUSCAR POR NOME
     @Operation(summary = "Buscar tutor por nome")
+    @PreAuthorize("hasRole('TUTOR')")
     @GetMapping("/buscar/nome")
     public List<Tutor> buscarPorNome(
             @RequestParam String nome) {
@@ -71,8 +78,10 @@ public class TutorController {
         return tutorService.buscarPorNome(nome);
     }
 
+
     // BUSCAR POR EMAIL
     @Operation(summary = "Buscar tutor por email")
+    @PreAuthorize("hasRole('TUTOR')")
     @GetMapping("/buscar/email")
     public List<Tutor> buscarPorEmail(
             @RequestParam String email) {
@@ -80,8 +89,10 @@ public class TutorController {
         return tutorService.buscarPorEmail(email);
     }
 
+
     // CADASTRAR
     @Operation(summary = "Cadastrar novo tutor")
+    @PreAuthorize("hasRole('TUTOR')")
     @PostMapping
     public TutorDTO cadastrar(
             @Valid @RequestBody TutorDTO dto) {
@@ -104,8 +115,10 @@ public class TutorController {
         return resposta;
     }
 
+
     // ATUALIZAR
     @Operation(summary = "Atualizar tutor")
+    @PreAuthorize("hasRole('TUTOR')")
     @PutMapping("/{id}")
     public ResponseEntity<Tutor> atualizar(
 
@@ -119,8 +132,10 @@ public class TutorController {
         );
     }
 
+
     // DELETAR
     @Operation(summary = "Excluir tutor")
+    @PreAuthorize("hasRole('TUTOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(
             @PathVariable Long id) {

@@ -25,6 +25,10 @@ public class Consulta {
     @NotBlank(message = "Observações obrigatórias")
     private String observacoes;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusConsulta status = StatusConsulta.AGENDADA;
+
     @ManyToOne
     @JoinColumn(name = "pet_id")
     @JsonBackReference
@@ -60,6 +64,14 @@ public class Consulta {
 
     public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
+    }
+
+    public StatusConsulta getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusConsulta status) {
+        this.status = status;
     }
 
     public Pet getPet() {
