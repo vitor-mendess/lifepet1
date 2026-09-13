@@ -1,4 +1,17 @@
 # 🐾 LifePet
+https://github.com/vitor-mendess/lifepet1
+
+## Integrantes
+
+- Vitor Mendes da Silva — RM: 565376
+- Aguinel Junior — RM: 564857
+- Felipe da Silva — RM: 563485
+- Henrique Gonçalves — RM 562086
+- Leonardo Saavedra — RM: 562229
+
+---
+
+# 🐾 LifePet
 
 Sistema web para gerenciamento de pets, consultas, vacinas, medicamentos e histórico veterinário.
 
@@ -79,16 +92,6 @@ A aplicação utiliza JWT para autenticação e Spring Security para controle de
 ## 👨‍💻 Projeto
 
 **LifePet — Sistema de gerenciamento e cuidados para pets.**
-Link GitHub - https://github.com/vitor-mendess/lifepet1
-
-
-## Integrantes
-
-- Vitor Mendes da Silva — RM: 565376
-- Aguinel Junior — RM: 564857
-- Felipe da Silva — RM: 563485
-- Henrique Gonçalves — RM 562086
-- Leonardo Saavedra — RM: 562229
 
 
 
