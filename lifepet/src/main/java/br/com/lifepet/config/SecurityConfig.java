@@ -94,7 +94,9 @@ public class SecurityConfig {
 
         // Aceita qualquer porta do localhost
         configuration.setAllowedOriginPatterns(List.of(
-                "http://localhost:*"
+                "http://localhost:*",
+                "https://lifepet.vercel.app",
+                "https://*.vercel.app"
         ));
 
         configuration.setAllowedMethods(List.of(
