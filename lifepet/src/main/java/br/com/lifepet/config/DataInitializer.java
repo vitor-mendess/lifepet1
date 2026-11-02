@@ -1,8 +1,12 @@
+
 package br.com.lifepet.config;
 
 import br.com.lifepet.entity.Perfil;
 import br.com.lifepet.entity.Usuario;
+import br.com.lifepet.entity.Tutor;
 import br.com.lifepet.repository.UsuarioRepository;
+import br.com.lifepet.repository.TutorRepository;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,46 +18,52 @@ public class DataInitializer {
     @Bean
     CommandLineRunner criarUsuarioTeste(
             UsuarioRepository usuarioRepository,
+            TutorRepository tutorRepository,
             PasswordEncoder passwordEncoder) {
 
         return args -> {
 
-            if (usuarioRepository.findByEmail("vitor@email.com").isEmpty()) {
+            Usuario usuario = usuarioRepository
+                    .findByEmail("vitor@email.com")
+                    .orElseGet(() -> {
+                        Usuario novoUsuario = new Usuario();
 
-                Usuario usuario = new Usuario();
+                        novoUsuario.setNome("Vitor");
+                        novoUsuario.setEmail("vitor@email.com");
+                        novoUsuario.setSenha(
+                                passwordEncoder.encode("123456"));
+                        novoUsuario.setPerfil(Perfil.TUTOR);
 
-                usuario.setNome("Vitor");
-                usuario.setEmail("vitor@email.com");
-                usuario.setSenha(passwordEncoder.encode("123456"));
-                usuario.setPerfil(Perfil.TUTOR);
+                        return usuarioRepository.save(novoUsuario);
+                    });
 
-                usuarioRepository.save(usuario);
+            if (usuario.getPerfil() == Perfil.TUTOR
+                    && tutorRepository.findByEmailContainingIgnoreCase(
+                    usuario.getEmail()).isEmpty()) {
 
-                System.out.println("=================================");
-                System.out.println("USUÁRIO DE TESTE CRIADO");
-                System.out.println("Email: vitor@email.com");
-                System.out.println("Senha: 123456");
-                System.out.println("Perfil: TUTOR");
-                System.out.println("=================================");
+                Tutor tutor = new Tutor();
+
+                tutor.setNome(usuario.getNome());
+                tutor.setEmail(usuario.getEmail());
+                tutor.setTelefone("11999999999");
+
+                tutorRepository.save(tutor);
+
+                System.out.println("TUTOR DE TESTE CRIADO!");
             }
 
-            if (usuarioRepository.findByEmail("vet@lifepet.com").isEmpty()) {
+            if (usuarioRepository.findByEmail(
+                    "vet@lifepet.com").isEmpty()) {
 
                 Usuario veterinario = new Usuario();
 
                 veterinario.setNome("Dr. Veterinário");
                 veterinario.setEmail("vet@lifepet.com");
-                veterinario.setSenha(passwordEncoder.encode("123456"));
+                veterinario.setSenha(
+                        passwordEncoder.encode("123456"));
                 veterinario.setPerfil(Perfil.VETERINARIO);
 
                 usuarioRepository.save(veterinario);
-
-                System.out.println("=================================");
-                System.out.println("VETERINÁRIO DE TESTE CRIADO");
-                System.out.println("Email: vet@lifepet.com");
-                System.out.println("Senha: 123456");
-                System.out.println("Perfil: VETERINARIO");
-                System.out.println("=================================");
             }
         };
     }
