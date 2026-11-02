@@ -9,7 +9,7 @@ interface LoginResponse {
 }
 
 export default function Login() {
-  const navigate = useNavigate();
+
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
