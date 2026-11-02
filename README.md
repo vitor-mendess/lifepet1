@@ -110,6 +110,12 @@ O projeto utiliza banco de dados H2 em memória no ambiente atual, com gerenciam
 - **Render:** hospedagem do backend.
 - **Vercel:** hospedagem do frontend.
 
+## 📚 Documentação do Projeto
+
+A documentação técnica do LifePet apresenta a arquitetura da aplicação, as tecnologias utilizadas, as principais funcionalidades e a integração com as disciplinas do semestre.
+
+📄 **[Acessar Documentação Técnica — 4ª Sprint (PDF)](Documenta%C3%A7%C3%A3o/LifePet_Documentacao_Tecnica_4_Sprint.pdf)**
+
 ## 👨‍💻 Integrantes
 
 - Vitor Mendes da Silva — RM: 565376
